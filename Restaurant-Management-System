@@ -1,0 +1,109 @@
+import random
+
+# Simulating QR code scanning
+def scan_qr_code():
+    print("Please scan your QR code to continue.")
+    # Simulating QR code scanning with a random identifier
+    qr_code_id = random.randint(1000, 9999)
+    print(f"QR code scanned. Your session ID is {qr_code_id}.")
+    return qr_code_id
+
+def welcome_user():
+    user_name = input("Enter your name: ")
+    print(f"Welcome to the hotel, {user_name}!")
+    return user_name
+
+# Menu and order management
+menu = [
+    {"id": 1, "name": "Burger", "price": 5.99},
+    {"id": 2, "name": "Pizza", "price": 8.99},
+    {"id": 3, "name": "Salad", "price": 4.99},
+    {"id": 4, "name": "Pasta", "price": 7.99}
+]
+
+def display_menu():
+    print("\nMenu:")
+    for item in menu:
+        print(f"{item['id']}. {item['name']} - ${item['price']:.2f}")
+
+def add_menu_item():
+    try:
+        new_id = len(menu) + 1
+        name = input("Enter the name of the new item: ").capitalize()
+        price = float(input("Enter the price of the new item: "))
+        if price < 0:
+            print("Price cannot be negative. Please try again.")
+            return
+        menu.append({"id": new_id, "name": name, "price": price})
+        print(f"Added {name} to the menu.")
+    except ValueError:
+        print("Invalid input. Please enter a valid price.")
+
+def take_order():
+    order = []
+    while True:
+        display_menu()
+        try:
+            item_id = int(input("Enter the item ID to order (0 to finish): "))
+            if item_id == 0:
+                break
+            if item_id not in [item['id'] for item in menu]:
+                print("Invalid item ID. Please try again.")
+                continue
+            quantity = int(input("Enter the quantity: "))
+            if quantity <= 0:
+                print("Quantity must be greater than 0. Please try again.")
+                continue
+            for item in menu:
+                if item["id"] == item_id:
+                    order.append({"name": item["name"], "price": item["price"], "quantity": quantity})
+                    print(f"Added {quantity} x {item['name']} to the order.")
+                    break
+            more_items = input("Do you want to add more items? (yes/no): ").strip().lower()
+            if more_items != 'yes':
+                break
+        except ValueError:
+            print("Invalid input. Please enter a valid number.")
+    return order
+
+def calculate_bill(order):
+    total = 0
+    print("\nYour Order:")
+    for item in order:
+        item_total = item["price"] * item["quantity"]
+        total += item_total
+        print(f"{item['quantity']} x {item['name']} - ${item_total:.2f}")
+    print(f"Total: ${total:.2f}")
+    print("Good day, sir!")
+
+def main():
+    # Simulate QR code scanning
+    scan_qr_code()
+
+    # Welcome user
+    welcome_user()
+
+    while True:
+        print("\n1. Display Menu")
+        print("2. Add Menu Item")
+        print("3. Take Order")
+        print("4. Exit")
+        
+        choice = input("Enter your choice: ")
+        
+        if choice == "1":
+            display_menu()
+        elif choice == "2":
+            add_menu_item()
+        elif choice == "3":
+            order = take_order()
+            if order:  # Only calculate the bill if there is an order
+                calculate_bill(order)
+        elif choice == "4":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
